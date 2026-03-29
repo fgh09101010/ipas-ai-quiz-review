@@ -48,7 +48,7 @@
                     <label class="flex items-center cursor-pointer group">
                         <input type="radio" name="qCountType" value="custom" checked class="w-5 h-5 text-blue-600 focus:ring-blue-500 mr-3">
                         <span class="text-slate-600 font-medium group-hover:text-blue-600 transition">隨機抽取</span>
-                        <input type="number" id="qCountInput" value="10" min="1" class="ml-3 w-20 border-2 border-slate-200 rounded-lg p-1.5 text-center focus:border-blue-500 focus:ring-0 outline-none transition">
+                        <input type="number" id="qCountInput" value="10" min="1" class="ml-3 w-20 border-2 border-slate-200 rounded-lg p-1.5 text-center focus:border-blue-500 focus:ring-0 outline-none transition text-sm">
                         <span class="ml-2 text-slate-600">題</span>
                     </label>
                     <label class="flex items-center cursor-pointer group">
@@ -105,9 +105,7 @@
                 </div>
 
                 <h3 id="qText" class="text-lg md:text-xl font-bold mb-8 leading-relaxed text-slate-800"></h3>
-                
                 <div id="optBox" class="space-y-3 md:space-y-4 mb-8"></div>
-                
                 <div id="ansBox" class="hidden mb-8 p-5 md:p-6 rounded-2xl border-2"></div>
 
                 <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mt-6">
@@ -153,7 +151,7 @@
     </div>
 
     <script>
-        let files = [];
+        let fileData = []; 
         let questions = [];
         let curIdx = 0;
         let score = 0;
@@ -188,7 +186,6 @@
         
         function saveMistake(q) {
             let m = getMistakes();
-            // 透過問題文字判斷是否重複，確保來源資訊也被保存
             if (!m.some(x => x.question === q.question)) { 
                 m.push(q); 
                 localStorage.setItem('ipas_mistakes', JSON.stringify(m)); 
@@ -221,13 +218,15 @@
         async function init() {
             updateReviewBtn();
             try {
-                const res = await fetch('filelist.json');
-                files = await res.json();
-                const cats = [...new Set(files.map(f => f.split('_')[0]))];
+                const res = await fetch('filelist.json?v=' + new Date().getTime());
+                fileData = await res.json(); 
+                
+                const cats = [...new Set(fileData.map(item => item.filename.includes('_') ? item.filename.split('_')[0] : '其他'))];
                 els.fileTree.innerHTML = '';
 
                 cats.forEach(cat => {
-                    const catFiles = files.filter(f => f.startsWith(cat));
+                    const catFiles = fileData.filter(item => (cat === '其他' && !item.filename.includes('_')) || item.filename.startsWith(cat));
+                    
                     let html = `
                         <div class="border border-slate-200 rounded-xl overflow-hidden bg-white mb-3 shadow-sm transition-all hover:border-blue-200">
                             <label class="flex items-center p-3.5 bg-slate-50 border-b border-slate-100 cursor-pointer hover:bg-blue-50/50 transition">
@@ -236,12 +235,18 @@
                             </label>
                             <div class="p-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                     `;
-                    catFiles.forEach(f => {
-                        const name = f.split('_')[1] ? f.split('_')[1].replace('.json','') : f;
+                    catFiles.forEach(item => {
+                        const f = item.filename;
+                        const qCount = item.count;
+                        const displayName = f.includes('_') ? f.split('_')[1].replace('.json', '') : f.replace('.json', '');
+                        
                         html += `
-                            <label class="flex items-center p-2.5 rounded-lg cursor-pointer hover:bg-slate-50 transition border border-transparent hover:border-slate-200">
-                                <input type="checkbox" value="${f}" class="file-cb file-cb-${cat} w-4 h-4 text-blue-600 rounded mr-3">
-                                <span class="text-slate-600 text-sm font-medium truncate" title="${name}">${name}</span>
+                            <label class="flex items-center justify-between p-2.5 rounded-lg cursor-pointer hover:bg-slate-50 transition border border-transparent hover:border-slate-200">
+                                <div class="flex items-center overflow-hidden mr-2">
+                                    <input type="checkbox" value="${f}" data-cat-group="${cat}" class="file-cb w-4 h-4 text-blue-600 rounded mr-3 flex-shrink-0">
+                                    <span class="text-slate-600 text-sm font-medium truncate" title="${displayName}">${displayName}</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full flex-shrink-0">${qCount} 題</span>
                             </label>
                         `;
                     });
@@ -250,7 +255,7 @@
                 });
                 bindCheckboxEvents();
             } catch (e) {
-                els.fileTree.innerHTML = '<p class="text-rose-500 p-4 bg-rose-50 rounded-lg text-center">⚠️ 讀取失敗，請確認 filelist.json 是否存在。</p>';
+                els.fileTree.innerHTML = '<p class="text-rose-500 p-4 text-center">⚠️ 讀取失敗，請確認檔案。</p>';
             }
         }
 
@@ -258,17 +263,17 @@
             document.querySelectorAll('.cat-cb').forEach(catCb => {
                 catCb.addEventListener('change', (e) => {
                     const cat = e.target.getAttribute('data-cat');
-                    document.querySelectorAll(`.file-cb-${cat}`).forEach(fileCb => fileCb.checked = e.target.checked);
+                    document.querySelectorAll(`input.file-cb[data-cat-group="${cat}"]`).forEach(cb => cb.checked = e.target.checked);
                     updateStartBtn();
                 });
             });
-            document.querySelectorAll('.file-cb').forEach(fileCb => {
-                fileCb.addEventListener('change', (e) => {
-                    const cat = Array.from(e.target.classList).find(c => c.startsWith('file-cb-')).replace('file-cb-', '');
-                    const allInCat = document.querySelectorAll(`.file-cb-${cat}`);
-                    const checkedInCat = document.querySelectorAll(`.file-cb-${cat}:checked`);
-                    const parentCatCb = document.querySelector(`.cat-cb[data-cat="${cat}"]`);
-                    if (parentCatCb) parentCatCb.checked = (allInCat.length === checkedInCat.length);
+            document.querySelectorAll('.file-cb').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const cat = cb.getAttribute('data-cat-group');
+                    const all = document.querySelectorAll(`input.file-cb[data-cat-group="${cat}"]`);
+                    const checked = document.querySelectorAll(`input.file-cb[data-cat-group="${cat}"]:checked`);
+                    const parent = document.querySelector(`.cat-cb[data-cat="${cat}"]`);
+                    if (parent) parent.checked = all.length === checked.length;
                     updateStartBtn();
                 });
             });
@@ -300,15 +305,15 @@
                 const selectedFiles = Array.from(document.querySelectorAll('.file-cb:checked')).map(cb => cb.value);
                 let allFetchedQs = [];
 
-                // 重要：在載入 JSON 時，將來源資訊注入到題目物件中
                 for (const file of selectedFiles) {
-                    const res = await fetch(`./data/${file}`);
+                    // 使用 encodeURIComponent 處理檔名空格
+                    const res = await fetch(`./data/${encodeURIComponent(file)}`);
+                    if (!res.ok) throw new Error(`讀取失敗: ${file}`);
                     const data = await res.json();
-                    const sourceName = file.replace('.json', ''); // 移除副檔名作為來源名稱
                     
                     data.forEach((q, index) => {
-                        q._source = sourceName;
-                        q._originalIndex = index + 1; // 原考卷中的題號
+                        q._source = file.replace('.json', '');
+                        q._originalIndex = index + 1;
                         allFetchedQs.push(q);
                     });
                 }
@@ -316,7 +321,8 @@
                 questions = prepareQuestions(allFetchedQs);
                 startQuizMode();
             } catch (e) {
-                alert("讀取題目失敗，請確認 JSON 格式！");
+                console.error(e);
+                alert("讀取題目失敗！請檢查 JSON 格式或檔名空格。");
                 updateStartBtn();
             }
         };
@@ -340,21 +346,18 @@
 
         function renderQuestion() {
             const q = questions[curIdx];
-            
-            // 更新狀態顯示
             els.qCounter.innerText = `${curIdx + 1} / ${questions.length}`;
             els.progBar.style.width = `${((curIdx) / questions.length) * 100}%`;
             els.scoreDisp.innerText = `得分: ${score}`;
             
-            // 顯示題目來源標籤
-            const sourceText = q._source ? q._source : '手動紀錄 / 舊版錯題';
-            const indexText = q._originalIndex ? `第 ${q._originalIndex} 題` : '未記錄';
+            const sourceText = q._source ? q._source : '未知來源 (舊紀錄)';
+            const indexText = q._originalIndex ? `第 ${q._originalIndex} 題` : '-';
             
             els.qSourceTag.innerHTML = `
                 <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 來源：${sourceText}
             `;
-            els.qIndexTag.innerText = `原本題號：${indexText}`;
+            els.qIndexTag.innerText = `考卷題號：${indexText}`;
 
             els.qText.innerText = q.question;
             els.optBox.innerHTML = '';
@@ -396,8 +399,8 @@
                     ${isCorrect ? '✅ 答對了！' : '❌ 答錯了！正確答案是：' + q.options[q.answer]}
                 </div>
                 <div class="text-slate-700 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed text-sm md:text-base">
-                    <span class="font-bold text-slate-500 block mb-1 uppercase text-xs tracking-wider">詳解分析</span>
-                    ${q.analysis || '無提供詳解內容。'}
+                    <span class="font-bold text-slate-500 block mb-1 text-xs uppercase tracking-widest">詳解分析</span>
+                    ${q.analysis || '無提供詳解。'}
                 </div>`;
             els.ansBox.classList.remove('hidden');
             els.subBtn.classList.add('hidden');
