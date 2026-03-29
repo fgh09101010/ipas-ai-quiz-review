@@ -27,12 +27,12 @@
 
     <div class="max-w-3xl mx-auto pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8">
         <header class="text-center mb-10 fade-in">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-3">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-3 text-balance">
                 IPAS 規劃師題庫系統
             </h1>
             <p class="text-slate-500 font-medium mb-4 text-sm md:text-base">跨分類測驗 • 自訂題數 • 專屬錯題本</p>
             <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 text-xs px-4 py-1.5 rounded-full shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 個人練習、非營利、且有明確標註官方來源
             </div>
         </header>
@@ -45,13 +45,13 @@
             <div class="mb-6 p-5 md:p-6 bg-slate-50 rounded-2xl border border-slate-100">
                 <label class="block text-sm md:text-base font-bold text-slate-700 mb-4">1. 測驗題數</label>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                    <label class="flex items-center cursor-pointer group w-full sm:w-auto">
+                    <label class="flex items-center cursor-pointer group">
                         <input type="radio" name="qCountType" value="custom" checked class="w-5 h-5 text-blue-600 focus:ring-blue-500 mr-3">
                         <span class="text-slate-600 font-medium group-hover:text-blue-600 transition">隨機抽取</span>
                         <input type="number" id="qCountInput" value="10" min="1" class="ml-3 w-20 border-2 border-slate-200 rounded-lg p-1.5 text-center focus:border-blue-500 focus:ring-0 outline-none transition">
                         <span class="ml-2 text-slate-600">題</span>
                     </label>
-                    <label class="flex items-center cursor-pointer group w-full sm:w-auto">
+                    <label class="flex items-center cursor-pointer group">
                         <input type="radio" name="qCountType" value="all" class="w-5 h-5 text-blue-600 focus:ring-blue-500 mr-3">
                         <span class="text-slate-600 font-medium group-hover:text-blue-600 transition">測試全部題目</span>
                     </label>
@@ -61,12 +61,12 @@
             <div class="mb-8">
                 <label class="block text-sm md:text-base font-bold text-slate-700 mb-3">2. 選擇試卷 (支援跨分類多選)</label>
                 <div id="fileTree" class="max-h-80 overflow-y-auto pr-2 space-y-3">
-                    <p class="text-slate-400 text-sm animate-pulse">讀取題庫資料中...</p>
+                    <p class="text-slate-400 text-sm animate-pulse text-center p-4">讀取題庫資料中...</p>
                 </div>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4">
-                <button id="startBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none" disabled>
+                <button id="startBtn" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     開始測驗 🚀
                 </button>
                 <button id="reviewBtn" class="flex-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-rose-500/30 hover:-translate-y-0.5 transition-all hidden">
@@ -94,10 +94,13 @@
             </div>
 
             <div class="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-lg shadow-slate-200/50 border border-white relative overflow-hidden">
-                <div class="mb-6 flex flex-wrap gap-2">
-                    <span id="qSourceTag" class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-500 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <div class="mb-6 flex flex-wrap gap-2 items-center">
+                    <span id="qSourceTag" class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-600 text-[10px] md:text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-200">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         來源：載入中...
+                    </span>
+                    <span id="qIndexTag" class="inline-flex items-center bg-indigo-50 text-indigo-600 text-[10px] md:text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-100">
+                        考卷題號：-
                     </span>
                 </div>
 
@@ -169,6 +172,7 @@
             scoreDisp: document.getElementById('scoreDisplay'),
             progBar: document.getElementById('progressBar'),
             qSourceTag: document.getElementById('qSourceTag'),
+            qIndexTag: document.getElementById('qIndexTag'),
             qText: document.getElementById('qText'),
             optBox: document.getElementById('optBox'),
             ansBox: document.getElementById('ansBox'),
@@ -184,7 +188,7 @@
         
         function saveMistake(q) {
             let m = getMistakes();
-            // 透過問題文字判斷是否重複
+            // 透過問題文字判斷是否重複，確保來源資訊也被保存
             if (!m.some(x => x.question === q.question)) { 
                 m.push(q); 
                 localStorage.setItem('ipas_mistakes', JSON.stringify(m)); 
@@ -246,7 +250,7 @@
                 });
                 bindCheckboxEvents();
             } catch (e) {
-                els.fileTree.innerHTML = '<p class="text-rose-500 p-4 bg-rose-50 rounded-lg">⚠️ 讀取失敗，請確認 filelist.json 是否存在或伺服器是否正常運作。</p>';
+                els.fileTree.innerHTML = '<p class="text-rose-500 p-4 bg-rose-50 rounded-lg text-center">⚠️ 讀取失敗，請確認 filelist.json 是否存在。</p>';
             }
         }
 
@@ -263,7 +267,8 @@
                     const cat = Array.from(e.target.classList).find(c => c.startsWith('file-cb-')).replace('file-cb-', '');
                     const allInCat = document.querySelectorAll(`.file-cb-${cat}`);
                     const checkedInCat = document.querySelectorAll(`.file-cb-${cat}:checked`);
-                    document.querySelector(`.cat-cb[data-cat="${cat}"]`).checked = (allInCat.length === checkedInCat.length);
+                    const parentCatCb = document.querySelector(`.cat-cb[data-cat="${cat}"]`);
+                    if (parentCatCb) parentCatCb.checked = (allInCat.length === checkedInCat.length);
                     updateStartBtn();
                 });
             });
@@ -295,15 +300,15 @@
                 const selectedFiles = Array.from(document.querySelectorAll('.file-cb:checked')).map(cb => cb.value);
                 let allFetchedQs = [];
 
-                // 讀取檔案時，順便把來源檔名與原題號注入到每道題目的物件裡
+                // 重要：在載入 JSON 時，將來源資訊注入到題目物件中
                 for (const file of selectedFiles) {
                     const res = await fetch(`./data/${file}`);
                     const data = await res.json();
-                    const sourceName = file.replace('.json', ''); // 移除副檔名當作來源名稱
+                    const sourceName = file.replace('.json', ''); // 移除副檔名作為來源名稱
                     
                     data.forEach((q, index) => {
                         q._source = sourceName;
-                        q._originalIndex = index + 1; // 記錄這是該份考卷的第幾題
+                        q._originalIndex = index + 1; // 原考卷中的題號
                         allFetchedQs.push(q);
                     });
                 }
@@ -336,17 +341,20 @@
         function renderQuestion() {
             const q = questions[curIdx];
             
-            // 更新進度與標籤
+            // 更新狀態顯示
             els.qCounter.innerText = `${curIdx + 1} / ${questions.length}`;
             els.progBar.style.width = `${((curIdx) / questions.length) * 100}%`;
             els.scoreDisp.innerText = `得分: ${score}`;
             
-            // 顯示題目來源與第幾題
-            const sourceText = q._source ? `${q._source} - 第 ${q._originalIndex} 題` : '錯題本紀錄';
+            // 顯示題目來源標籤
+            const sourceText = q._source ? q._source : '手動紀錄 / 舊版錯題';
+            const indexText = q._originalIndex ? `第 ${q._originalIndex} 題` : '未記錄';
+            
             els.qSourceTag.innerHTML = `
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 來源：${sourceText}
             `;
+            els.qIndexTag.innerText = `原本題號：${indexText}`;
 
             els.qText.innerText = q.question;
             els.optBox.innerHTML = '';
@@ -388,8 +396,8 @@
                     ${isCorrect ? '✅ 答對了！' : '❌ 答錯了！正確答案是：' + q.options[q.answer]}
                 </div>
                 <div class="text-slate-700 mt-3 pt-3 border-t border-slate-200/60 leading-relaxed text-sm md:text-base">
-                    <span class="font-bold text-slate-500 block mb-1">【詳解】</span>
-                    ${q.analysis || '無提供詳解。'}
+                    <span class="font-bold text-slate-500 block mb-1 uppercase text-xs tracking-wider">詳解分析</span>
+                    ${q.analysis || '無提供詳解內容。'}
                 </div>`;
             els.ansBox.classList.remove('hidden');
             els.subBtn.classList.add('hidden');
@@ -406,7 +414,6 @@
         els.nextBtn.onclick = () => { 
             curIdx++; 
             renderQuestion(); 
-            // 換題時稍微往上捲動，確保看得到題目
             window.scrollTo({ top: els.quiz.offsetTop - 20, behavior: 'smooth' });
         };
         
