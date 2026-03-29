@@ -1,0 +1,34 @@
+name: Auto Update File List
+
+on:
+  push:
+    paths:
+      - 'data/**'      # 只有當 data 資料夾內的檔案有變動時才觸發
+    branches:
+      - main           # 你的主要分支名稱，如果是 master 請改為 master
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 給予自動提交檔案的權限
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run Update Script
+        run: python update_list.py
+
+      - name: Commit and Push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add filelist.json
+          # 檢查是否有變動，避免沒有變動時報錯
+          git diff --quiet && git diff --staged --quiet || (git commit -m "docs: 自動更新題目清單 [skip ci]" && git push)
