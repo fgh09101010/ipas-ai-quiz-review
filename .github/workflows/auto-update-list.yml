@@ -3,9 +3,11 @@ name: Auto Update File List
 on:
   push:
     paths:
-      - 'data/**'      # 只有當 data 資料夾內的檔案有變動時才觸發
+      - 'data/**'
     branches:
-      - main           # 你的主要分支名稱，如果是 master 請改為 master
+      - main        # push 觸發的分支限制放在這裡
+  
+  workflow_dispatch: # 這一行後方留空或換行即可，不需要縮排寫分支
 
 jobs:
   update-json:
